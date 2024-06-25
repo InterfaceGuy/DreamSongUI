@@ -149,9 +149,7 @@ function renderLinearFlow(nodes, parentDirectory) {
 
       node.forEach(subNode => {
         if (subNode.type === 'file') {
-          const mediaElement = document.createElement('img');
-          mediaElement.className = 'media'; // Add media class
-          mediaElement.src = getFilePath(subNode.file, parentDirectory);
+          const mediaElement = createMediaElement(subNode.file, parentDirectory);
           combinedDiv.appendChild(mediaElement);
         } else if (subNode.type === 'text') {
           const textElement = document.createElement('div');
@@ -165,10 +163,8 @@ function renderLinearFlow(nodes, parentDirectory) {
       flipFlop = !flipFlop; // Alternate the flip-flop pattern
     } else {
       if (node.type === 'file') {
-        const imgElement = document.createElement('img');
-        imgElement.className = 'standalone-media'; // Add standalone-media class
-        imgElement.src = getFilePath(node.file, parentDirectory);
-        canvasContainer.appendChild(imgElement);
+        const mediaElement = createMediaElement(node.file, parentDirectory);
+        canvasContainer.appendChild(mediaElement);
       } else if (node.type === 'text') {
         const textElement = document.createElement('div');
         textElement.className = 'text'; // Add text class
@@ -180,6 +176,45 @@ function renderLinearFlow(nodes, parentDirectory) {
       }
     }
   });
+}
+
+// Function to create media elements (image or video)
+function createMediaElement(filePath, parentDirectory) {
+  const videoExtensions = ['mp4', 'mov', 'webm', 'ogg']; // List of supported video extensions
+  const fileExtension = filePath.split('.').pop().toLowerCase();
+  const relativePath = getFilePath(filePath, parentDirectory);
+
+  if (videoExtensions.includes(fileExtension)) {
+    const videoElement = document.createElement('video');
+    videoElement.className = 'media'; // Add media class
+    videoElement.src = relativePath;
+    videoElement.autoplay = true;
+    videoElement.loop = true;
+    videoElement.muted = true; // Video is muted by default when autoplay
+    videoElement.style.display = 'block'; // Ensure the video is displayed as a block element
+
+    // Event listener to maintain current frame on pause
+    videoElement.addEventListener('pause', () => {
+      videoElement.style.objectFit = 'cover'; // Maintain the current frame
+    });
+
+    // Event listener to show controls on hover
+    videoElement.addEventListener('mouseover', () => {
+      videoElement.controls = true;
+    });
+    
+    // Event listener to hide controls when not hovering
+    videoElement.addEventListener('mouseout', () => {
+      videoElement.controls = false;
+    });
+
+    return videoElement;
+  } else {
+    const imgElement = document.createElement('img');
+    imgElement.className = 'media'; // Add media class
+    imgElement.src = relativePath;
+    return imgElement;
+  }
 }
 
 // Function to convert markdown to HTML
