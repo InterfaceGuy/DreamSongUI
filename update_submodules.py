@@ -15,29 +15,29 @@ def parse_canvas_file(file_path):
     # Get the name of the parent folder
     canvas_parent_folder = os.path.basename(canvas_dir)
     
-    external_gif_repos = []
+    external_media_repos = []
     
     with open(file_path, 'r') as file:
         data = json.load(file)
     
     for node in data['nodes']:
-        if node['type'] == 'file' and node['file'].endswith('.gif'):
-            gif_path = node['file']
-            # Get the first part of the GIF path (parent folder)
-            gif_parent_folder = gif_path.split('/')[0]
-            # Check if the GIF parent folder is different from the canvas parent folder
-            if gif_parent_folder != canvas_parent_folder:
-                if gif_parent_folder not in external_gif_repos:
-                    external_gif_repos.append(gif_parent_folder)
-                # Update the GIF path to include the canvas parent folder
-                new_gif_path = os.path.join(canvas_parent_folder, gif_path)
-                node['file'] = new_gif_path
+        if node['type'] == 'file':
+            media_path = node['file']
+            # Get the first part of the media path (parent folder)
+            media_parent_folder = media_path.split('/')[0]
+            # Check if the media parent folder is different from the canvas parent folder
+            if media_parent_folder != canvas_parent_folder:
+                if media_parent_folder not in external_media_repos:
+                    external_media_repos.append(media_parent_folder)
+                # Update the media path to include the canvas parent folder
+                new_media_path = os.path.join(canvas_parent_folder, media_path)
+                node['file'] = new_media_path
     
     # Save the updated canvas file
     with open(file_path, 'w') as file:
         json.dump(data, file, indent=2)
     
-    return external_gif_repos
+    return external_media_repos
 
 def update_submodules(repos):
     # Read the current submodules from .gitmodules
