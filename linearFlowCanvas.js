@@ -220,14 +220,23 @@ function createMediaElement(filePath, parentDirectory) {
 // Function to convert markdown to HTML
 function convertMarkdownToHTML(markdown) {
   if (!markdown) return ''; // Return an empty string if markdown is undefined
+
   return markdown
-    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-    .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
-    .replace(/^##### (.*$)/gim, '<h5>$1</h5>')
+    // Convert headers
     .replace(/^###### (.*$)/gim, '<h6>$1</h6>')
-    .replace(/\n/g, '<br>');
+    .replace(/^##### (.*$)/gim, '<h5>$1</h5>')
+    .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+    // Convert bold text
+    .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
+    // Convert bullet points
+    .replace(/^\* (.*$)/gim, '<ul><li>$1</li></ul>')
+    // Convert new lines to <br>
+    .replace(/\n/g, '<br>')
+    // Merge consecutive <ul> tags
+    .replace(/<\/ul><ul>/gim, '');
 }
 
 // Convert camel case to title case
