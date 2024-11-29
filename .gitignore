@@ -3,3 +3,5 @@
 /.pl
 /DreamSongUI.sublime-project
 /DreamSongUI.sublime-workspace
+.aider*
+.env
